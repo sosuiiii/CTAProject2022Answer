@@ -1,0 +1,14 @@
+strings:
+  inputs: ./CTAProject/UIResource/Resource/Localizable/Localizable.strings
+  outputs:
+    - templateName: flat-swift4
+      output: ./CTAProject/UIResource/Generated/Localized.swift
+      params:
+        publicAccess: true
+xcassets:
+  inputs: ./CTAProject/UIResource/Resource/Assets.xcassets
+  outputs:
+    - templateName: swift4
+      output: ./CTAProject/UIResource/Generated/Asset.swift
+      params:
+        publicAccess: true
