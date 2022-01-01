@@ -1,4 +1,6 @@
 name: CTAProject
+options:
+    bundleIdPrefix: cta.project
 targets:
   CTAProject:
     type: application
@@ -8,8 +10,6 @@ targets:
     schemes:
         CTAProject:
         testTargetName: CTAProjectTests
-    settings:
-      PRODUCT_BUNDLE_IDENTIFIER: com.hoge.CTAProject
     preBuildScripts:
       - path: ./Scripts/before-compile.sh
         name: before-compile
