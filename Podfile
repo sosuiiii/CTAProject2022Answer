@@ -6,6 +6,7 @@ target 'CTAProject' do
   use_frameworks!
   pod 'SwiftLint'
   pod 'SwiftGen'
+  pod 'Unio'
 
   # Pods for CTAProject
 

@@ -1,20 +1,33 @@
 PODS:
+  - RxRelay (6.2.0):
+    - RxSwift (= 6.2.0)
+  - RxSwift (6.2.0)
   - SwiftGen (6.5.1)
   - SwiftLint (0.45.1)
+  - Unio (0.11.0):
+    - RxRelay (~> 6.0)
+    - RxSwift (~> 6.0)
 
 DEPENDENCIES:
   - SwiftGen
   - SwiftLint
+  - Unio
 
 SPEC REPOS:
   trunk:
+    - RxRelay
+    - RxSwift
     - SwiftGen
     - SwiftLint
+    - Unio
 
 SPEC CHECKSUMS:
+  RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
+  RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
   SwiftLint: 06ac37e4d38c7068e0935bb30cda95f093bec761
+  Unio: 6e57bd33dbcf38d281b0b420f75c0eae3bef0cf3
 
-PODFILE CHECKSUM: 475d5c35b80440cc04c267d3fc6ff122c5ad3d6b
+PODFILE CHECKSUM: 6e572ca157a3223a9b0e10e4a573a9a515469160
 
 COCOAPODS: 1.10.2
