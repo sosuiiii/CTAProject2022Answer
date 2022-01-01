@@ -20,10 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
         self.window = window
         window.makeKeyAndVisible()
-
-        let listViewModel = ListViewModel()
-        let listViewController = ListViewController(viewModel: listViewModel)
-        window.rootViewController = listViewController
+        window.rootViewController = TopTabBarController()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
