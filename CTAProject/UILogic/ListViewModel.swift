@@ -19,10 +19,16 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         let input = dependency.inputObservables
         let state = dependency.state
 
+        var count = 0
         input.searchTextInput
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { text in
-                if text.count > 50 {
+                print(text.count)
+                if text.count > 5 && count != text.count {
+                    count = text.count //FIXME: - endEditingによる２重発火防止
+                    print("over🌝\(count):\(text.count)")
                     state.alertType.accept(.textCountOver)
+                    state.validatedText.accept("\(text.prefix(50))")
                 } else {
                     state.validatedText.accept(text)
                 }
@@ -107,7 +113,7 @@ extension ListViewModel {
 
     struct State: StateType {
         let alertType = PublishRelay<AlertType>()
-        let validatedText = BehaviorRelay<String>(value: "")
+        let validatedText = PublishRelay<String>()
         let datasource = BehaviorRelay<[HotPepperResponseDataSource]>(value: [])
         let hud = PublishRelay<HUDContentType>()
         let dismissHUD = PublishRelay<Void>()
