@@ -23,7 +23,7 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d4i-Aw-5BG" customClass="AnimatableView" customModule="IBAnimatable">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d4i-Aw-5BG">
                     <rect key="frame" x="27" y="333" width="360" height="230"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Npy-2c-PTf">
@@ -87,7 +87,7 @@
                 </view>
             </subviews>
             <viewLayoutGuide key="safeArea" id="L9K-kF-W2F"/>
-            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <color key="backgroundColor" white="0.0" alpha="0.5" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="d4i-Aw-5BG" firstAttribute="centerX" secondItem="hh1-EC-Wc8" secondAttribute="centerX" id="C4A-e2-gMH"/>
                 <constraint firstItem="d4i-Aw-5BG" firstAttribute="centerY" secondItem="hh1-EC-Wc8" secondAttribute="centerY" id="z4b-1S-iIi"/>

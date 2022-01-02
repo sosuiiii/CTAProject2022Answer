@@ -45,12 +45,10 @@ class AlertView: UIView {
     }
 
     private func dismiss() {
-        let firstWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
-        guard let window = firstWindow else { return }
         let transition = CATransition()
         transition.duration = 0.3
         transition.type = .fade
-        window.layer.add(transition, forKey: kCATransition)
+        window?.layer.add(transition, forKey: kCATransition)
         removeFromSuperview()
     }
 }

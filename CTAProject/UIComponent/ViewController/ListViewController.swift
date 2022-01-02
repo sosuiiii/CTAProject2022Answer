@@ -38,6 +38,7 @@ final class ListViewController: UIViewController {
         searchView.searchBar.rx.text.orEmpty
             .bind(to: viewModel.input.searchTextInput)
             .disposed(by: disposeBag)
+
         searchView.searchBar.rx.searchButtonClicked
             .subscribe(onNext: { [weak self] in
                 guard let me = self else { return }
@@ -49,10 +50,6 @@ final class ListViewController: UIViewController {
         viewModel.output.validatedText
             .bind(to: searchView.searchBar.rx.text)
             .disposed(by: disposeBag)
-
-        viewModel.output.alert
-            .subscribe(onNext: { type in
-        }).disposed(by: disposeBag)
 
         viewModel.output.hud
             .observe(on: ConcurrentMainScheduler.instance)
@@ -69,6 +66,7 @@ final class ListViewController: UIViewController {
         viewModel.output.alert
             .subscribe(onNext: { [weak self] alertType in
                 guard let me = self else { return }
+                me.searchView.endEditing(true)
                 switch alertType {
                 case .textCountOver:
                     let alertView = AlertView(message: L10n.charactersExceeds50)
