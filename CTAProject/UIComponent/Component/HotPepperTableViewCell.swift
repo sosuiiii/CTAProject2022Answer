@@ -8,9 +8,12 @@
 import UIKit
 import SDWebImage
 
-protocol HotPepperTableViewCellDelegate {
-    func starTapped(item: Shop?, on: Bool)
-    func favoriteStarTapped(object: ShopObject)
+protocol HotPepperTableViewCellDelegate: AnyObject {
+    func addFavorite(item: Shop)
+    func removeFavorite(item: Shop)
+}
+protocol HotPepperFavoriteTableViewCellDelegate: AnyObject {
+    func removeFavorite(object: ShopObject)
 }
 
 class HotPepperTableViewCell: UITableViewCell {
@@ -23,8 +26,9 @@ class HotPepperTableViewCell: UITableViewCell {
     @IBOutlet weak var genreAndStation: UILabel!
     @IBOutlet weak var starIcon: UIImageView!
     private var noImageURL = URL(string: "https://www.shoshinsha-design.com/wp-content/uploads/2020/05/noimage-760x460.png")
-    var delegate:HotPepperTableViewCellDelegate?
-    private var shop:Shop?
+    weak var delegate: HotPepperTableViewCellDelegate?
+    weak var favoriteDelegate: HotPepperFavoriteTableViewCellDelegate?
+    private var shop: Shop?
     private var object: ShopObject?
 
     override func awakeFromNib() {
@@ -47,23 +51,23 @@ class HotPepperTableViewCell: UITableViewCell {
         let objectNameList = objects.map { $0.name }
         if objectNameList.contains(item.name) {
             starIcon.tag = 1
-            starIcon.image = UIImage(named: "star_on")
+            starIcon.image = Asset.starOn.image
         } else {
-            starIcon.image = UIImage(named: "star_off")
+            starIcon.image = Asset.starOff.image
         }
     }
 
     func setupFavorite(item: ShopObject) {
         object = item
         starIcon.tag = 1
-        starIcon.image = UIImage(named: "star_on")
+        starIcon.image = Asset.starOn.image
         setImageBySDWebImage(with: URL(string: item.logoImage))
         name.text = item.name
         budget.text = item.budgetName
         genreAndStation.text = "\(item.genre)/\(item.station)駅"
     }
 
-    func setImageBySDWebImage(with url: URL?) {
+    private func setImageBySDWebImage(with url: URL?) {
         logoImage.sd_setImage(with: url) { [weak self] image, error, _, _ in
             if error == nil, let image = image {
                 self?.logoImage.image = image
@@ -75,17 +79,17 @@ class HotPepperTableViewCell: UITableViewCell {
     @IBAction func starTapped(_ sender: Any) {
         if starIcon.tag == 0 {
             starIcon.tag = 1
-            starIcon.image = UIImage(named: "star_on")
+            starIcon.image = Asset.starOn.image
             if let shop = shop {
-                delegate?.starTapped(item: shop, on: true)
+                delegate?.addFavorite(item: shop)
             }
         } else {
             starIcon.tag = 0
+            starIcon.image = Asset.starOff.image
             if let shop = shop {
-                starIcon.image = UIImage(named: "star_off")
-                delegate?.starTapped(item: shop, on: false)
+                delegate?.removeFavorite(item: shop)
             } else if let object = object {
-                delegate?.favoriteStarTapped(object: object)
+                favoriteDelegate?.removeFavorite(object: object)
             }
         }
     }

@@ -25,7 +25,6 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
 
         input.searchTextInput
             .subscribe(onNext: { text in
-                print(text.count)
                 if text.count > 50 {
                     state.alertType.accept(.textCountOver)
                 } else {
@@ -35,11 +34,13 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
 
         input.searchButtonTapped
             .flatMapLatest({ text -> Observable<Event<HotPepperResponse>> in
-                HotPepperRepository.search(keyValue: ["keyword": text]).materialize()
+                state.hud.accept(.progress)
+                return HotPepperRepository.search(keyValue: ["keyword": text]).materialize()
             }).subscribe(onNext: { event in
                 switch event {
                 case .next(let response):
                     state.datasource.accept([HotPepperResponseDataSource(items: response.results.shop)])
+                    state.dismissHUD.accept(())
                 case .error:
                     state.hud.accept(.error)
                 default:

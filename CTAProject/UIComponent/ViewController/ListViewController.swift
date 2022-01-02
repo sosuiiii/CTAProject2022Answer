@@ -29,7 +29,7 @@ final class ListViewController: UIViewController {
             configureCell: { _, tableView, indexPath, items in
                 let cell = tableView.dequeueReusableCell(withIdentifier: "HotPepperTableViewCell", for: indexPath) as! HotPepperTableViewCell
                 cell.setupCell(item: items)
-                //            cell.delegate = self
+                cell.delegate = self
                 return cell
             })
         setLayout()
@@ -73,8 +73,6 @@ final class ListViewController: UIViewController {
                 case .textCountOver:
                     let alertView = AlertView(message: L10n.charactersExceeds50)
                     me.showView(view: alertView)
-                default:
-                    break
                 }
             }).disposed(by: disposeBag)
 
@@ -107,5 +105,16 @@ final class ListViewController: UIViewController {
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+}
+
+extension ListViewController: HotPepperTableViewCellDelegate {
+
+    func addFavorite(item: Shop) {
+        viewModel.input.saveFavorite.onNext(item)
+    }
+
+    func removeFavorite(item: Shop) {
+        viewModel.input.deleteObject.onNext(item.name)
     }
 }
