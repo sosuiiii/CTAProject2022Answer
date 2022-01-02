@@ -1,15 +1,11 @@
-
+import RealmSwift
 import RxCocoa
 import RxDataSources
 import RxSwift
 import RxRelay
 import Unio
 import PKHUD
-
-protocol ListViewModelType: AnyObject {
-    var input: InputWrapper<ListViewModel.Input> { get }
-    var output: OutputWrapper<ListViewModel.Output> { get }
-}
+import RealmSwift
 
 final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
     convenience init() {
