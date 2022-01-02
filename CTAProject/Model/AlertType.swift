@@ -1,0 +1,4 @@
+
+enum AlertType {
+    case textCountOver
+}

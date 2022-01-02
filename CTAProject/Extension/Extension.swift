@@ -6,3 +6,16 @@
 //
 
 import Foundation
+import UIKit
+
+extension UIViewController {
+    func showView(view: UIView) {
+        let transition = CATransition()
+        transition.duration = 0.3
+        transition.type = .fade
+        transition.subtype = .fromTop
+        let window = UIApplication.shared.windows.first { $0.isKeyWindow }
+        window?.layer.add(transition, forKey: kCATransition)
+        window?.addSubview(view)
+    }
+}

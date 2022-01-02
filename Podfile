@@ -6,6 +6,13 @@ target 'CTAProject' do
   use_frameworks!
   pod 'SwiftLint'
   pod 'SwiftGen'
+  pod 'Unio'
+  pod 'RxCocoa'
+  pod 'PKHUD'
+  pod 'RxDataSources'
+  pod 'RealmSwift'
+  pod 'Moya'
+  pod 'SDWebImage'
 
   # Pods for CTAProject
 
