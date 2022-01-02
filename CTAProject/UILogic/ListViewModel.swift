@@ -24,7 +24,7 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { text in
                 print(text.count)
-                if text.count > 5 && count != text.count {
+                if text.count > 50 && count != text.count {
                     count = text.count //FIXME: - endEditingによる２重発火防止
                     print("over🌝\(count):\(text.count)")
                     state.alertType.accept(.textCountOver)
