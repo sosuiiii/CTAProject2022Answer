@@ -9,6 +9,14 @@ import Foundation
 
 // swiftlint:disable function_parameter_count identifier_name line_length type_body_length
 public enum L10n {
+  /// 文字数が50文字を超過しています。
+  public static let charactersExceeds50 = L10n.tr("Localizable", "CharactersExceeds50")
+  /// グルスポ
+  public static let gourmentSpot = L10n.tr("Localizable", "GourmentSpot")
+  /// キーワード
+  public static let keyWord = L10n.tr("Localizable", "KeyWord")
+  /// リスト
+  public static let list = L10n.tr("Localizable", "List")
   /// ローカライズサンプル
   public static let localizeSample = L10n.tr("Localizable", "LocalizeSample")
 }

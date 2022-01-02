@@ -1,3 +1,8 @@
 
 // MARK: - サンプル
 "LocalizeSample" = "ローカライズサンプル";
+
+"GourmentSpot" = "グルスポ";
+"List" = "リスト";
+"CharactersExceeds50" = "文字数が50文字を超過しています。";
+"KeyWord" = "キーワード";
