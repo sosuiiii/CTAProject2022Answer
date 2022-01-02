@@ -15,7 +15,7 @@ final class TopTabBarController: UITabBarController {
     private func createListViewController() -> UIViewController {
         let listViewModel = ListViewModel()
         let listViewController = ListViewController(viewModel: listViewModel)
-        listViewController.tabBarItem = .init(title: "リスト", image: UIImage(systemName: "list.bullet"), tag: 0)
+        listViewController.tabBarItem = .init(title: L10n.list, image: UIImage(systemName: "list.bullet"), tag: 0)
         listViewController.modalPresentationStyle = .fullScreen
         return listViewController
     }
