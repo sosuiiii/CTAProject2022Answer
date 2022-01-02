@@ -45,10 +45,12 @@ class AlertView: UIView {
     }
 
     private func dismiss() {
-        let transition = CATransition()
-        transition.duration = 0.3
-        transition.type = .fade
-        window?.layer.add(transition, forKey: kCATransition)
-        removeFromSuperview()
+        DispatchQueue.main.async {
+            let transition = CATransition()
+            transition.duration = 0.3
+            transition.type = .fade
+            self.window?.layer.add(transition, forKey: kCATransition)
+            self.removeFromSuperview()
+        }
     }
 }

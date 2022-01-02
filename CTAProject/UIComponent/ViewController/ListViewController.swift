@@ -35,9 +35,12 @@ final class ListViewController: UIViewController {
         setLayout()
 
         // Input
-        searchView.searchBar.rx.text.orEmpty
-            .bind(to: viewModel.input.searchTextInput)
-            .disposed(by: disposeBag)
+        searchView.searchBar.searchTextField.rx.controlEvent([.editingChanged])
+            .subscribe(onNext: { [weak self] in
+                guard let me = self else { return }
+                let text = me.searchView.searchBar.text ?? ""
+                viewModel.input.searchTextInput.onNext(text)
+            }).disposed(by: disposeBag)
 
         searchView.searchBar.rx.searchButtonClicked
             .subscribe(onNext: { [weak self] in
@@ -64,6 +67,7 @@ final class ListViewController: UIViewController {
             }).disposed(by: disposeBag)
 
         viewModel.output.alert
+            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe(onNext: { [weak self] alertType in
                 guard let me = self else { return }
                 me.searchView.endEditing(true)
