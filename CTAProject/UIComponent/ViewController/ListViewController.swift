@@ -36,6 +36,7 @@ final class ListViewController: UIViewController {
 
         // Input
         searchView.searchBar.searchTextField.rx.controlEvent([.editingChanged])
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { [weak self] in
                 guard let me = self else { return }
                 let text = me.searchView.searchBar.text ?? ""

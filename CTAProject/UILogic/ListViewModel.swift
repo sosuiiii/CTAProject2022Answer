@@ -23,7 +23,6 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         let extra = dependency.extra
 
         input.searchTextInput
-            .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { text in
                 if text.count > 50 {
                     state.alertType.accept(.textCountOver)
@@ -67,7 +66,6 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
                     state.hud.accept(.error)
                 }
             }
-            print("EntityList:\(extra.realmManager.getEntityList(type: ShopObject.self))")
         }).disposed(by: disposeBag)
 
         input.deleteObject.subscribe(onNext: { objectName in

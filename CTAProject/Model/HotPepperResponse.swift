@@ -2,11 +2,11 @@
 import Foundation
 import CoreLocation
 
-struct HotPepperResponse: Codable {
+struct HotPepperResponse: Codable, Equatable {
     let results: Result
 }
 
-struct Result: Codable {
+struct Result: Codable, Equatable {
 
     let apiVersion: String
     let resultsAvailable: Int
@@ -23,7 +23,7 @@ struct Result: Codable {
     }
 }
 
-struct Shop: Codable, Identifiable {
+struct Shop: Codable, Identifiable, Equatable {
     let id: String
     let name: String
     let logoImage: URL?
@@ -148,12 +148,12 @@ struct Shop: Codable, Identifiable {
     }
 }
 
-struct Area: Codable {
+struct Area: Codable, Equatable {
     let code: String
     let name: String
 }
 
-struct Genre: Codable {
+struct Genre: Codable, Equatable {
     let code: String
     let name: String
     enum CodingKeys: String, CodingKey {
@@ -161,33 +161,33 @@ struct Genre: Codable {
         case name
     }
 }
-struct GenreResponse: Codable {
+struct GenreResponse: Codable, Equatable {
     let results: GenreArr
 }
-struct GenreArr: Codable {
+struct GenreArr: Codable, Equatable {
     let genre: [Genre]
     enum CodingKeys: String, CodingKey {
         case genre
     }
 }
 
-struct Budget: Codable {
+struct Budget: Codable, Equatable {
     let code: String
     let name: String
     let average: String
 }
 
-struct Urls: Codable {
+struct Urls: Codable, Equatable {
     let pc: URL
     let sp: URL?
 }
 
-struct Photo: Codable {
+struct Photo: Codable, Equatable {
 
     let pc: ImageUrl
     let mobile: ImageUrl?
 
-    struct ImageUrl: Codable {
+    struct ImageUrl: Codable, Equatable {
         let l: URL
         let m: URL?
         let s: URL

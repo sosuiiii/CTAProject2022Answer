@@ -13,6 +13,7 @@ target 'CTAProject' do
   pod 'RealmSwift'
   pod 'Moya'
   pod 'SDWebImage'
+  pod 'RxTest'
 
   # Pods for CTAProject
 
