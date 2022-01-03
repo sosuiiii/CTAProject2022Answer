@@ -8,16 +8,19 @@ import PKHUD
 import RealmSwift
 
 final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
-    convenience init() {
+    convenience init(hotPepperRepository: HotPepperRepositoryType = HotPepperRepository(),
+                     realmManager: RealmManagerType = RealmManager()) {
         self.init(input: Input(),
                   state: State(),
-                  extra: Extra()
+                  extra: Extra(hotPepperRepository: hotPepperRepository,
+                               realmManager: realmManager)
         )
     }
     static func bind(from dependency: Dependency<Input, State, Extra>, disposeBag: DisposeBag) -> Output {
 
         let input = dependency.inputObservables
         let state = dependency.state
+        let extra = dependency.extra
 
         input.searchTextInput
             .observe(on: MainScheduler.asyncInstance)
@@ -33,7 +36,7 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         input.searchButtonTapped
             .flatMapLatest({ text -> Observable<Event<HotPepperResponse>> in
                 state.hud.accept(.progress)
-                return HotPepperRepository.search(keyValue: ["keyword": text]).materialize()
+                return extra.hotPepperRepository.search(keyValue: ["keyword": text]).materialize()
             }).subscribe(onNext: { event in
                 switch event {
                 case .next(let response):
@@ -56,7 +59,7 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
 
         input.saveFavorite.subscribe(onNext: { shop in
             let object = ShopObject(shop: shop)
-            RealmManager.addEntity(object: object) { status in
+            extra.realmManager.addEntity(object: object) { status in
                 switch status {
                 case .success:
                     state.hud.accept(.success)
@@ -64,11 +67,11 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
                     state.hud.accept(.error)
                 }
             }
-            print("EntityList:\(RealmManager.getEntityList(type: ShopObject.self))")
+            print("EntityList:\(extra.realmManager.getEntityList(type: ShopObject.self))")
         }).disposed(by: disposeBag)
 
         input.deleteObject.subscribe(onNext: { objectName in
-            RealmManager.deleteOneObject(type: ShopObject.self, name: objectName) { status in
+            extra.realmManager.deleteOneObject(type: ShopObject.self, name: objectName) { status in
                 switch status {
                 case .success:
                     state.hud.accept(.success)
@@ -105,6 +108,14 @@ extension ListViewModel {
     }
 
     struct Extra: ExtraType {
+        let hotPepperRepository: HotPepperRepositoryType
+        let realmManager: RealmManagerType
+
+        init(hotPepperRepository: HotPepperRepositoryType,
+             realmManager: RealmManagerType) {
+            self.hotPepperRepository = hotPepperRepository
+            self.realmManager = realmManager
+        }
     }
 
     struct State: StateType {

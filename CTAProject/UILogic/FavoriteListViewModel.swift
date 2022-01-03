@@ -8,31 +8,32 @@ import Unio
 import PKHUD
 
 final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteListViewModelType {
-    convenience init() {
+    convenience init(realmManager: RealmManagerType = RealmManager()) {
         self.init(input: Input(),
                   state: State(),
-                  extra: Extra()
+                  extra: Extra(realmManager: realmManager)
         )
     }
     static func bind(from dependency: Dependency<Input, State, Extra>, disposeBag: DisposeBag) -> Output {
 
         let input = dependency.inputObservables
         let state = dependency.state
+        let extra = dependency.extra
 
-        let datasource = getFavoriteHotPepperObjectsDataSource()
+        let datasource = getFavoriteHotPepperObjectsDataSource(extra: extra)
         state.datasource.accept(datasource)
 
         input.viewWillAppear.subscribe(onNext: {
-            let datasource = getFavoriteHotPepperObjectsDataSource()
+            let datasource = getFavoriteHotPepperObjectsDataSource(extra: extra)
             state.datasource.accept(datasource)
         }).disposed(by: disposeBag)
 
         input.deleteObject.subscribe(onNext: { objectName in
-            RealmManager.deleteOneObject(type: ShopObject.self, name: objectName) { status in
+            extra.realmManager.deleteOneObject(type: ShopObject.self, name: objectName) { status in
                 switch status {
                 case .success:
                     state.hud.accept(.success)
-                    let datasource = getFavoriteHotPepperObjectsDataSource()
+                    let datasource = getFavoriteHotPepperObjectsDataSource(extra: extra)
                     state.datasource.accept(datasource)
                 case .error:
                     state.hud.accept(.error)
@@ -54,8 +55,8 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
                       dismissHUD: state.dismissHUD.asObservable()
         )
     }
-    static func getFavoriteHotPepperObjectsDataSource() -> [FavoriteHotPepperObjectsDataSource] {
-        let objects = RealmManager.getEntityList(type: ShopObject.self)
+    static func getFavoriteHotPepperObjectsDataSource(extra: FavoriteListViewModel.Extra) -> [FavoriteHotPepperObjectsDataSource] {
+        let objects = extra.realmManager.getEntityList(type: ShopObject.self)
         let dtoObjects: [ShopObject] = objects.map { $0 }
         let datasource = [FavoriteHotPepperObjectsDataSource(items: dtoObjects)]
         return datasource
@@ -76,6 +77,11 @@ extension FavoriteListViewModel {
     }
 
     struct Extra: ExtraType {
+        let realmManager: RealmManagerType
+
+        init(realmManager: RealmManagerType) {
+            self.realmManager = realmManager
+        }
     }
 
     struct State: StateType {

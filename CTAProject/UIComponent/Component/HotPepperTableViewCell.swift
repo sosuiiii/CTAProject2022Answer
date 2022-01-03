@@ -47,7 +47,7 @@ class HotPepperTableViewCell: UITableViewCell {
         budget.text = item.budget?.name
         genreAndStation.text = "\(item.genre.name)/\(item.stationName ?? "")駅"
 
-        let objects = RealmManager.getEntityList(type: ShopObject.self)
+        let objects = RealmManager().getEntityList(type: ShopObject.self)
         let objectNameList = objects.map { $0.name }
         if objectNameList.contains(item.name) {
             starIcon.tag = 1
