@@ -72,22 +72,12 @@ class RealmManagerTypeMock: RealmManagerType {
 
     private(set) var getEntityListCallCount = 0
     var getEntityListHandler: ((Any) -> (Any))?
-    func getEntityList<T: Object>(type: T.Type) -> Results<T> {
+    func getEntityList<T: Object>(type: T.Type) -> Array<T> {
         getEntityListCallCount += 1
         if let getEntityListHandler = getEntityListHandler {
-            return getEntityListHandler(type) as! Results<T>
+            return getEntityListHandler(type) as! Array<T>
         }
-        fatalError("getEntityListHandler returns can't have a default value thus its handler must be set")
-    }
-
-    private(set) var filterEntityListCallCount = 0
-    var filterEntityListHandler: ((Any, String, Any) -> (Any))?
-    func filterEntityList<T: Object>(type: T.Type, property: String, filter: Any) -> Results<T> {
-        filterEntityListCallCount += 1
-        if let filterEntityListHandler = filterEntityListHandler {
-            return filterEntityListHandler(type, property, filter) as! Results<T>
-        }
-        fatalError("filterEntityListHandler returns can't have a default value thus its handler must be set")
+        return Array<T>()
     }
 }
 

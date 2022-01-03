@@ -23,6 +23,12 @@ enum Mock {
     static func getShop() -> [Shop] {
         getHotPepperResponse().results.shop
     }
+    static func getFavoriteHotPepperResponseDataSource() -> FavoriteHotPepperObjectsDataSource {
+        FavoriteHotPepperObjectsDataSource(items: getShopObject())
+    }
+    static func getShopObject() -> [ShopObject] {
+        [ShopObject(shop: getShop()[0])]
+    }
 }
 extension String {
     static let mock = "mock"

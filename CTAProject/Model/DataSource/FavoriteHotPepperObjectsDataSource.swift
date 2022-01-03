@@ -1,6 +1,6 @@
 
 import RxDataSources
-struct FavoriteHotPepperObjectsDataSource {
+struct FavoriteHotPepperObjectsDataSource: Equatable {
     var items: [ShopObject]
 }
 extension FavoriteHotPepperObjectsDataSource: SectionModelType {

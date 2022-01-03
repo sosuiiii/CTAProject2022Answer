@@ -12,6 +12,5 @@ protocol RealmManagerType {
     func deleteObject<T: Object>(type: T.Type)
 
     func getEntityList<T: Object>(type: T.Type)
-    -> Results<T>
-    func filterEntityList<T: Object>(type: T.Type, property: String, filter: Any) -> Results<T>
+    -> Array<T>
 }

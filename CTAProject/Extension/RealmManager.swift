@@ -49,12 +49,8 @@ final class RealmManager: RealmManagerType {
         }
     }
 
-    func getEntityList<T: Object>(type: T.Type) -> Results<T> {
+    func getEntityList<T: Object>(type: T.Type) -> Array<T> {
         let realm = try! Realm()
-        return realm.objects(type.self)
-    }
-
-    func filterEntityList<T: Object>(type: T.Type, property: String, filter: Any) -> Results<T> {
-        return getEntityList(type: type).filter("%K == %@", property, String(describing: filter))
+        return realm.objects(type.self).map { $0 }
     }
 }

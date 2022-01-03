@@ -20,11 +20,8 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
         let state = dependency.state
         let extra = dependency.extra
 
-        let datasource = getFavoriteHotPepperObjectsDataSource(extra: extra)
-        state.datasource.accept(datasource)
-
         input.viewWillAppear.subscribe(onNext: {
-            let datasource = getFavoriteHotPepperObjectsDataSource(extra: extra)
+            let datasource = getFavoriteHotPepperObjectsDataSource(realm: extra.realmManager)
             state.datasource.accept(datasource)
         }).disposed(by: disposeBag)
 
@@ -33,7 +30,7 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
                 switch status {
                 case .success:
                     state.hud.accept(.success)
-                    let datasource = getFavoriteHotPepperObjectsDataSource(extra: extra)
+                    let datasource = getFavoriteHotPepperObjectsDataSource(realm: extra.realmManager)
                     state.datasource.accept(datasource)
                 case .error:
                     state.hud.accept(.error)
@@ -55,10 +52,9 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
                       dismissHUD: state.dismissHUD.asObservable()
         )
     }
-    static func getFavoriteHotPepperObjectsDataSource(extra: FavoriteListViewModel.Extra) -> [FavoriteHotPepperObjectsDataSource] {
-        let objects = extra.realmManager.getEntityList(type: ShopObject.self)
-        let dtoObjects: [ShopObject] = objects.map { $0 }
-        let datasource = [FavoriteHotPepperObjectsDataSource(items: dtoObjects)]
+    static func getFavoriteHotPepperObjectsDataSource(realm: RealmManagerType) -> [FavoriteHotPepperObjectsDataSource] {
+        let objects = realm.getEntityList(type: ShopObject.self)
+        let datasource = [FavoriteHotPepperObjectsDataSource(items: objects)]
         return datasource
     }
 
