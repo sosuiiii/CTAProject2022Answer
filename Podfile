@@ -13,13 +13,13 @@ target 'CTAProject' do
   pod 'RealmSwift'
   pod 'Moya'
   pod 'SDWebImage'
-  pod 'RxTest'
 
   # Pods for CTAProject
 
   target 'CTAProjectTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'RxTest'
   end
 
   target 'CTAProjectUITests' do
