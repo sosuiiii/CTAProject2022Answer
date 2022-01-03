@@ -22,9 +22,9 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         input.searchTextInput
             .observe(on: MainScheduler.asyncInstance)
             .subscribe(onNext: { text in
-                if text.count > 5 {
+                if text.count > 50 {
                     state.alertType.accept(.textCountOver)
-                    state.validatedText.accept("\(text.prefix(5))")
+                    state.validatedText.accept("\(text.prefix(50))")
                 } else {
                     state.validatedText.accept(text)
                 }
