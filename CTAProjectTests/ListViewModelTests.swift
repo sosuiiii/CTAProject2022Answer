@@ -30,7 +30,7 @@ class ListViewModelTests: XCTestCase {
 
         testTarget.input.searchTextInput.onNext(exceedFiftyText)
         XCTAssertEqual(validatedText.value?.count, 50, "50文字超過の入力文字が50文字に切り抜かれて反映されること")
-        XCTAssertTrue(alert.value!, "50文字超過でアラートが出ること")
+        XCTAssertNotNil(alert.value, "50文字超過でアラートが出ること")
     }
 
     func test_searchButtonTapped_success() {
