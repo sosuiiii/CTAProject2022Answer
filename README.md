@@ -13,3 +13,14 @@ Mintのインストールができたらクローンする
 bundle管理の人は  
 `$ make setup-b`  
 を実行する
+
+## レビュー観点
+- DIしているか
+- インターフェスを作っているか
+- MVVMになっているか
+  - KickStarterのVMデザインパターン
+  - Unioを使ったVMデザインパターン
+- テストコードを書いているか
+ - mockoloを使っているか
+ - WatchStackのコード渡しても良さそう
+- swiftGenを使っているか
