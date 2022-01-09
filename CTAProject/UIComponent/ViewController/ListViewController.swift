@@ -23,11 +23,12 @@ final class ListViewController: UIViewController {
         view.addSubview(headerView)
         view.addSubview(searchView)
         view.addSubview(tableView)
-        tableView.register(UINib(nibName: "HotPepperTableViewCell", bundle: nil), forCellReuseIdentifier: "HotPepperTableViewCell")
+        let cellIdentifier = "HotPepperTableViewCell"
+        tableView.register(UINib(nibName: cellIdentifier, bundle: nil), forCellReuseIdentifier: cellIdentifier)
         tableView.backgroundColor = .systemGray6
         datasource = RxTableViewSectionedReloadDataSource<HotPepperResponseDataSource>(
             configureCell: { _, tableView, indexPath, items in
-                let cell = tableView.dequeueReusableCell(withIdentifier: "HotPepperTableViewCell", for: indexPath) as! HotPepperTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! HotPepperTableViewCell
                 cell.setupCell(item: items)
                 cell.delegate = self
                 return cell

@@ -21,11 +21,12 @@ final class FavoriteListViewController: UIViewController {
         view.backgroundColor = .systemYellow
         view.addSubview(headerView)
         view.addSubview(tableView)
-        tableView.register(UINib(nibName: "HotPepperTableViewCell", bundle: nil), forCellReuseIdentifier: "HotPepperTableViewCell")
+        let cellIdentifier = "HotPepperTableViewCell"
+        tableView.register(UINib(nibName: cellIdentifier, bundle: nil), forCellReuseIdentifier: cellIdentifier)
         tableView.backgroundColor = .systemGray6
         datasource = RxTableViewSectionedReloadDataSource<FavoriteHotPepperObjectsDataSource>(
             configureCell: { _, tableView, indexPath, items in
-                let cell = tableView.dequeueReusableCell(withIdentifier: "HotPepperTableViewCell", for: indexPath) as! HotPepperTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! HotPepperTableViewCell
                 cell.setupFavorite(item: items)
                 cell.favoriteDelegate = self
                 return cell
