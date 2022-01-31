@@ -14,8 +14,8 @@ extension HotPepperRepository {
 
     func search(keyValue: [String: Any]) -> Observable<HotPepperResponse> {
 
-        return Observable.create({ [weak self] observer in
-            self?.apiProvider.request(.search(keyValue: keyValue)) { response in
+        return Observable.create({ [apiProvider] observer in
+            apiProvider.request(.search(keyValue: keyValue)) { response in
 
                 switch response {
                 case .success(let response):
