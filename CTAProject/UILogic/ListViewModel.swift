@@ -35,7 +35,9 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         input.searchButtonTapped
             .flatMapLatest({ text -> Observable<Event<HotPepperResponse>> in
                 state.hud.accept(.progress)
-                return extra.hotPepperRepository.search(keyValue: ["keyword": text]).materialize()
+                return extra.hotPepperRepository.search(keyValue: ["keyword": text])
+                    .timeout(.milliseconds(5000), scheduler: ConcurrentMainScheduler.instance)
+                    .materialize()
             }).subscribe(onNext: { event in
                 switch event {
                 case .next(let response):
