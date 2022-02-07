@@ -18,6 +18,9 @@ final class ListViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
 
+        let hoge: [Int] = [1,2,3,4,5]
+        print(hoge.makeIterator())
+        print("aa")
         // UI・layout
         view.backgroundColor = .systemYellow
         view.addSubview(headerView)

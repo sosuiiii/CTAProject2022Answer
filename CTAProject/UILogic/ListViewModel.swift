@@ -32,23 +32,18 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
                 }
             }).disposed(by: disposeBag)
 
-        input.searchButtonTapped
-            .flatMapLatest({ text -> Observable<Event<HotPepperResponse>> in
-                state.hud.accept(.progress)
-                return extra.hotPepperRepository.search(keyValue: ["keyword": text])
-                    .timeout(.milliseconds(5000), scheduler: ConcurrentMainScheduler.instance)
-                    .materialize()
-            }).subscribe(onNext: { event in
-                switch event {
-                case .next(let response):
+        _ = input.searchButtonTapped.subscribe(onNext: { text in
+            state.hud.accept(.progress)
+            extra.hotPepperRepository.search(keyValue: ["keyword": text])
+                .timeout(.milliseconds(5000), scheduler: ConcurrentMainScheduler.instance)
+                .subscribe(onSuccess: { response in
                     state.datasource.accept([HotPepperResponseDataSource(items: response.results.shop)])
                     state.dismissHUD.accept(())
-                case .error:
+                }, onFailure: { _ in
                     state.hud.accept(.error)
-                default:
-                    state.dismissHUD.accept(())
-                }
-            }).disposed(by: disposeBag)
+                })
+                .disposed(by: disposeBag)
+        })
 
         // MARK: - HUD表示は 0.7秒後 にdismissする
         state.hud

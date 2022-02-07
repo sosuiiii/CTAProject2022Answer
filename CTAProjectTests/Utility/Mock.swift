@@ -17,8 +17,8 @@ enum Mock {
         Result(apiVersion: .mock, resultsAvailable: 1, resultsReturned: .mock, resultsStart: 1, shop: shops)
         return CTAProject.HotPepperResponse(results: result)
     }
-    static func ObservableHotPepperResponse() -> Observable<HotPepperResponse> {
-        Observable.just(getHotPepperResponse())
+    static func SingleHotPepperResponse() -> Single<HotPepperResponse> {
+        Single.just(getHotPepperResponse())
     }
     static func getShop() -> [Shop] {
         getHotPepperResponse().results.shop

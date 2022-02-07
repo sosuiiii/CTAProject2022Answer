@@ -44,7 +44,7 @@ class ListViewModelTests: XCTestCase {
         var keyword: [String: Any]?
         dependency.hotPepperRespository.searchHandler = {
             keyword = $0
-            return Mock.ObservableHotPepperResponse()
+            return Mock.SingleHotPepperResponse()
         }
 
         testTarget.input.searchButtonTapped.onNext(.mock)

@@ -12,25 +12,22 @@ final class HotPepperRepository: HotPepperRepositoryType {
 }
 extension HotPepperRepository {
 
-    func search(keyValue: [String: Any]) -> Observable<HotPepperResponse> {
-
-        return Observable.create({ [apiProvider] observer in
+    func search(keyValue: [String: Any]) -> Single<HotPepperResponse> {
+        return Single<HotPepperResponse>.create { [apiProvider] observer in
             apiProvider.request(.search(keyValue: keyValue)) { response in
-
                 switch response {
                 case .success(let response):
                     do {
                         let decodedData = try JSONDecoder().decode(HotPepperResponse.self, from: response.data)
-                        observer.onNext(decodedData)
-                        observer.onCompleted()
+                        observer(.success(decodedData))
                     } catch {
-                        observer.onError(HotPepperAPIError.decodeError)
+                        observer(.failure(HotPepperAPIError.decodeError))
                     }
                 case .failure:
-                    observer.onError(HotPepperAPIError.responseError)
+                    observer(.failure(HotPepperAPIError.responseError))
                 }
             }
-            return Disposables.create{}
-        })
+            return Disposables.create()
+        }
     }
 }

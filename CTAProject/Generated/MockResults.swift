@@ -16,13 +16,13 @@ class HotPepperRepositoryTypeMock: HotPepperRepositoryType {
 
 
     private(set) var searchCallCount = 0
-    var searchHandler: (([String: Any]) -> (Observable<HotPepperResponse>))?
-    func search(keyValue: [String: Any]) -> Observable<HotPepperResponse> {
+    var searchHandler: (([String: Any]) -> (Single<HotPepperResponse>))?
+    func search(keyValue: [String: Any]) -> Single<HotPepperResponse> {
         searchCallCount += 1
         if let searchHandler = searchHandler {
             return searchHandler(keyValue)
         }
-        return Observable<HotPepperResponse>.empty()
+        fatalError("searchHandler returns can't have a default value thus its handler must be set")
     }
 }
 
