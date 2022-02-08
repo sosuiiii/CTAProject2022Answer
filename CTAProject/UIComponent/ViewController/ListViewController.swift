@@ -18,9 +18,6 @@ final class ListViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
 
-        let hoge: [Int] = [1,2,3,4,5]
-        print(hoge.makeIterator())
-        print("aa")
         // UI・layout
         view.backgroundColor = .systemYellow
         view.addSubview(headerView)
@@ -40,19 +37,14 @@ final class ListViewController: UIViewController {
 
         // Input
         searchView.searchBar.searchTextField.rx.controlEvent([.editingChanged])
-            .observe(on: ConcurrentMainScheduler.instance)
-            .subscribe(onNext: { [weak self] in
-                guard let me = self else { return }
-                let text = me.searchView.searchBar.text ?? ""
-                viewModel.input.searchTextInput.onNext(text)
-            }).disposed(by: disposeBag)
+            .withLatestFrom(searchView.searchBar.rx.text.orEmpty)
+            .bind(to: viewModel.input.searchTextInput)
+            .disposed(by: disposeBag)
 
         searchView.searchBar.rx.searchButtonClicked
-            .subscribe(onNext: { [weak self] in
-                guard let me = self else { return }
-                viewModel.input.searchButtonTapped.onNext(me.searchView.searchBar.text ?? "")
-                me.view.endEditing(true)
-            }).disposed(by: disposeBag)
+            .withLatestFrom(searchView.searchBar.rx.text.orEmpty)
+            .bind(to: viewModel.input.searchButtonTapped)
+            .disposed(by: disposeBag)
 
         // Output
         viewModel.output.validatedText
@@ -73,8 +65,8 @@ final class ListViewController: UIViewController {
 
         viewModel.output.alert
             .observe(on: ConcurrentMainScheduler.instance)
-            .subscribe(onNext: { [weak self] alertType in
-                guard let me = self else { return }
+            .withUnretained(self)
+            .subscribe(onNext: { me, alertType in
                 me.searchView.endEditing(true)
                 switch alertType {
                 case .textCountOver:
