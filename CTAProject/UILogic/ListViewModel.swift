@@ -22,36 +22,33 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         let state = dependency.state
         let extra = dependency.extra
 
-        input.searchTextInput
-            .subscribe(onNext: { text in
-                if text.count > 50 {
-                    state.alertType.accept(.textCountOver)
-                    state.validatedText.accept("\(text.prefix(50))")
-                } else {
-                    state.validatedText.accept(text)
-                }
-            }).disposed(by: disposeBag)
+        input.searchTextInput.subscribe(onNext: { text in
+            if text.count > 50 {
+                state.alertType.accept(.textCountOver)
+                state.validatedText.accept("\(text.prefix(50))")
+            } else {
+                state.validatedText.accept(text)
+            }
+        }).disposed(by: disposeBag)
 
-        _ = input.searchButtonTapped.subscribe(onNext: { text in
+        input.searchButtonTapped.flatMapLatest({ text -> Single<HotPepperResponse> in
             state.hud.accept(.progress)
-            extra.hotPepperRepository.search(keyValue: ["keyword": text])
+            return extra.hotPepperRepository.search(keyValue: ["keyword": text])
                 .timeout(.milliseconds(5000), scheduler: ConcurrentMainScheduler.instance)
-                .subscribe(onSuccess: { response in
-                    state.datasource.accept([HotPepperResponseDataSource(items: response.results.shop)])
-                    state.dismissHUD.accept(())
-                }, onFailure: { _ in
-                    state.hud.accept(.error)
-                })
-                .disposed(by: disposeBag)
-        })
+        }).subscribe(onNext: { response in
+            state.datasource.accept([HotPepperResponseDataSource(items: response.results.shop)])
+            state.dismissHUD.accept(())
+        }, onError: { _ in
+            state.hud.accept(.error)
+        }).disposed(by: disposeBag)
 
         // MARK: - HUD表示は 0.7秒後 にdismissする
         state.hud
             .delay(RxTimeInterval.milliseconds(700),
                    scheduler: ConcurrentMainScheduler.instance)
-            .subscribe(onNext: { _ in
-                state.dismissHUD.accept(())
-            }).disposed(by: disposeBag)
+            .map(void)
+            .bind(to: state.dismissHUD)
+            .disposed(by: disposeBag)
 
         input.saveFavorite.subscribe(onNext: { shop in
             let object = ShopObject(shop: shop)
