@@ -68,8 +68,7 @@ final class ListViewController: UIViewController {
             .withUnretained(self)
             .subscribe(onNext: { me, alertType in
                 me.searchView.endEditing(true)
-                switch alertType {
-                case .textCountOver:
+                if case .textCountOver = alertType {
                     let alertView = AlertView(message: L10n.charactersExceeds50)
                     me.showView(view: alertView)
                 }
