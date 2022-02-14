@@ -30,17 +30,19 @@ class AlertView: UIView {
 
     private func setup(message: String) {
         self.message.text = message
-        doneButton.setTitle("閉じる", for: .normal)
+        doneButton.setTitle(L10n.close, for: .normal)
         cancelButton.isHidden = true
 
         doneButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.dismiss()
+            .withUnretained(self)
+            .subscribe(onNext: { me, _ in
+                me.dismiss()
             }).disposed(by: disposeBag)
 
         cancelButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.dismiss()
+            .withUnretained(self)
+            .subscribe(onNext: { me, _ in
+                me.dismiss()
             }).disposed(by: disposeBag)
     }
 
