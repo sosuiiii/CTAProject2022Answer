@@ -42,6 +42,7 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
         state.hud
             .delay(RxTimeInterval.milliseconds(700),
                    scheduler: ConcurrentMainScheduler.instance)
+            .filter { $0 == .error }
             .map(void)
             .bind(to: state.dismissHUD)
             .disposed(by: disposeBag)

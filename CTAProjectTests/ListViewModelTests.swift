@@ -51,9 +51,7 @@ class ListViewModelTests: XCTestCase {
         XCTAssertEqual(hotPepperRepository.searchCallCount, 1, "searchが1回呼ばれること")
         XCTAssertEqual(keyword!["keyword"] as? String, .mock, "[keyword: 検索ワード]でイベントが流れること")
         XCTAssertEqual(datasource.value?[0].items, Mock.getShop(), "期待する検索結果が返ってくること")
-
-        let hudIsProgress = HUDContentTypeJudge.isProgress(hud.value)
-        XCTAssertTrue(hudIsProgress, "progressが表示されること")
+        XCTAssertEqual(hud.value, .progress, "progressが表示されること")
     }
 
     func test_searchButtonTapped_failure() {
@@ -65,9 +63,7 @@ class ListViewModelTests: XCTestCase {
         XCTAssertEqual(hotPepperRepository.searchCallCount, 0, "searchが呼ばれていないこと")
         hotPepperRepository.searchHandler = { _ in .error(MockError()) }
         testTarget.input.searchButtonTapped.onNext(.mock)
-
-        let hudIsError = HUDContentTypeJudge.isError(hud.value)
-        XCTAssertEqual(hudIsError, true, "APIErrorでHUDContentType.errorが流れること")
+        XCTAssertEqual(hud.value, .error, "APIErrorでHUDContentType.errorが流れること")
     }
 
     func test_saveFavorite_success() {
@@ -81,9 +77,8 @@ class ListViewModelTests: XCTestCase {
         XCTAssertEqual(realmManager.addEntityCallCount, 0, "saveFavoriteイベント前に呼ばれていないこと")
         let shop = Mock.getShop()[0]
         testTarget.input.saveFavorite.onNext(shop)
-        let hudIsSuccess = HUDContentTypeJudge.isSuccess(hud.value)
         XCTAssertEqual(realmManager.addEntityCallCount, 1, "saveFavoriteイベント後に1度だけ呼ばれること")
-        XCTAssertTrue(hudIsSuccess, "保存に成功した時、HUDContentType.successが流れること")
+        XCTAssertEqual(hud.value, .success, "保存に成功した時、HUDContentType.successが流れること")
     }
 
     func test_saveFavorite_failure() {
@@ -97,9 +92,8 @@ class ListViewModelTests: XCTestCase {
         XCTAssertEqual(realmManager.addEntityCallCount, 0, "saveFavoriteイベント前に呼ばれていないこと")
         let shop = Mock.getShop()[0]
         testTarget.input.saveFavorite.onNext(shop)
-        let hudIsError = HUDContentTypeJudge.isError(hud.value)
         XCTAssertEqual(realmManager.addEntityCallCount, 1, "saveFavoriteイベント後に1度だけ呼ばれること")
-        XCTAssertTrue(hudIsError, "保存に成功した時、HUDContentType.errorが流れること")
+        XCTAssertEqual(hud.value, .error, "保存に成功した時、HUDContentType.errorが流れること")
     }
 
     func test_deleteObject_success() {
@@ -112,9 +106,8 @@ class ListViewModelTests: XCTestCase {
         }
         XCTAssertEqual(realmManager.deleteOneObjectCallCount, 0, "deleteObjectイベント前に呼ばれていないこと")
         testTarget.input.deleteObject.onNext(.mock)
-        let hudIsSuccess = HUDContentTypeJudge.isSuccess(hud.value)
         XCTAssertEqual(realmManager.deleteOneObjectCallCount, 1, "deleteObjectイベント後に1度だけ呼ばれること")
-        XCTAssertTrue(hudIsSuccess, "保存に成功した時、HUDContentType.successが流れること")
+        XCTAssertEqual(hud.value, .success, "保存に成功した時、HUDContentType.successが流れること")
     }
 
     func test_deleteObject_failure() {
@@ -127,9 +120,8 @@ class ListViewModelTests: XCTestCase {
         }
         XCTAssertEqual(realmManager.deleteOneObjectCallCount, 0, "deleteObjectイベント前に呼ばれていないこと")
         testTarget.input.deleteObject.onNext(.mock)
-        let hudIsError = HUDContentTypeJudge.isError(hud.value)
         XCTAssertEqual(realmManager.deleteOneObjectCallCount, 1, "deleteObjectイベント後に1度だけ呼ばれること")
-        XCTAssertTrue(hudIsError, "保存に成功した時、HUDContentType.errorが流れること")
+        XCTAssertEqual(hud.value, .error, "保存に成功した時、HUDContentType.errorが流れること")
     }
 
 }
@@ -151,28 +143,4 @@ extension ListViewModelTests {
     }
 
     struct MockError: Error {}
-
-    enum HUDContentTypeJudge {
-        static func isError(_ type: HUDContentType?) -> Bool {
-            guard let type = type else { return false }
-            switch type {
-            case .error: return true
-            default: return false
-            }
-        }
-        static func isSuccess(_ type: HUDContentType?) -> Bool {
-            guard let type = type else { return false }
-            switch type {
-            case .success: return true
-            default: return false
-            }
-        }
-        static func isProgress(_ type: HUDContentType?) -> Bool {
-            guard let type = type else { return false }
-            switch type {
-            case .progress: return true
-            default: return false
-            }
-        }
-    }
 }

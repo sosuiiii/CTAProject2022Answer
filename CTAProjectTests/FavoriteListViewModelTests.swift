@@ -45,8 +45,7 @@ class FavoriteListViewModelTests: XCTestCase {
         XCTAssertEqual(realmManager.deleteOneObjectCallCount, 0)
         testTarget.input.deleteObject.onNext(.mock)
         XCTAssertEqual(realmManager.deleteOneObjectCallCount, 1)
-        let hudIsSuccess = HUDContentTypeJudge.isSuccess(hud.value)
-        XCTAssertTrue(hudIsSuccess)
+        XCTAssertEqual(hud.value, .success, "データの削除に成功すると、successが流れること")
         XCTAssertEqual(realmManager.getEntityListCallCount, 1)
         XCTAssertEqual(datasource.value?[0].items, [], "お気に入りデータが削除されていること")
     }
@@ -60,8 +59,7 @@ class FavoriteListViewModelTests: XCTestCase {
             status(.error)
         }
         testTarget.input.deleteObject.onNext(.mock)
-        let hudIsError = HUDContentTypeJudge.isError(hud.value)
-        XCTAssertTrue(hudIsError)
+        XCTAssertEqual(hud.value, .error, "データの削除に失敗すると、errorが流れること")
     }
 
 }
@@ -73,29 +71,6 @@ extension FavoriteListViewModelTests {
         init() {
             self.realmManager = RealmManagerTypeMock()
             testTarget = FavoriteListViewModel(realmManager: realmManager)
-        }
-    }
-    enum HUDContentTypeJudge {
-        static func isError(_ type: HUDContentType?) -> Bool {
-            guard let type = type else { return false }
-            switch type {
-            case .error: return true
-            default: return false
-            }
-        }
-        static func isSuccess(_ type: HUDContentType?) -> Bool {
-            guard let type = type else { return false }
-            switch type {
-            case .success: return true
-            default: return false
-            }
-        }
-        static func isProgress(_ type: HUDContentType?) -> Bool {
-            guard let type = type else { return false }
-            switch type {
-            case .progress: return true
-            default: return false
-            }
         }
     }
 }

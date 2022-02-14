@@ -46,6 +46,7 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         state.hud
             .delay(RxTimeInterval.milliseconds(700),
                    scheduler: ConcurrentMainScheduler.instance)
+            .filter { $0 == .error }
             .map(void)
             .bind(to: state.dismissHUD)
             .disposed(by: disposeBag)
