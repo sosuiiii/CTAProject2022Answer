@@ -6,3 +6,5 @@
 "List" = "リスト";
 "CharactersExceeds50" = "文字数が50文字を超過しています。";
 "KeyWord" = "キーワード";
+"Close" = "閉じる";
+"GenreAndStation" = "%@/%@駅";

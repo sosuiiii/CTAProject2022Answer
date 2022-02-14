@@ -18,7 +18,6 @@ protocol HotPepperFavoriteTableViewCellDelegate: AnyObject {
 
 class HotPepperTableViewCell: UITableViewCell {
 
-
     @IBOutlet weak var baseView: UIView!
     @IBOutlet weak var logoImage: UIImageView!
     @IBOutlet weak var name: UILabel!
@@ -45,7 +44,7 @@ class HotPepperTableViewCell: UITableViewCell {
         setImageBySDWebImage(with: item.logoImage ?? noImageURL)
         name.text = item.name
         budget.text = item.budget?.name
-        genreAndStation.text = "\(item.genre.name)/\(item.stationName ?? "")駅"
+        genreAndStation.text = L10n.genreAndStation("\(item.genre)", "\(item.stationName ?? "")")
 
         let objects = RealmManager().getEntityList(type: ShopObject.self)
         let objectNameList = objects.map { $0.name }
@@ -53,6 +52,7 @@ class HotPepperTableViewCell: UITableViewCell {
             starIcon.tag = 1
             starIcon.image = Asset.starOn.image
         } else {
+            starIcon.tag = 0
             starIcon.image = Asset.starOff.image
         }
     }
@@ -64,7 +64,7 @@ class HotPepperTableViewCell: UITableViewCell {
         setImageBySDWebImage(with: URL(string: item.logoImage))
         name.text = item.name
         budget.text = item.budgetName
-        genreAndStation.text = "\(item.genre)/\(item.station)駅"
+        genreAndStation.text = L10n.genreAndStation("\(item.genre)", "\(item.station)")
     }
 
     private func setImageBySDWebImage(with url: URL?) {

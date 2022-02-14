@@ -11,6 +11,12 @@ import Foundation
 public enum L10n {
   /// 文字数が50文字を超過しています。
   public static let charactersExceeds50 = L10n.tr("Localizable", "CharactersExceeds50")
+  /// 閉じる
+  public static let close = L10n.tr("Localizable", "Close")
+  /// %@/%@駅
+  public static func genreAndStation(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "GenreAndStation", String(describing: p1), String(describing: p2))
+  }
   /// グルスポ
   public static let gourmentSpot = L10n.tr("Localizable", "GourmentSpot")
   /// キーワード
