@@ -18,4 +18,12 @@ extension UIViewController {
         window?.layer.add(transition, forKey: kCATransition)
         window?.addSubview(view)
     }
+    struct Const {
+        static func nib<T: UITableViewCell>(_ tableViewCell: T.Type) -> UINib {
+            return UINib(nibName: String(describing: T.self), bundle: nil)
+        }
+        static func identifier<T: UITableViewCell>(_ tableViewCell: T.Type) -> String {
+            return String(describing: T.self)
+        }
+    }
 }
