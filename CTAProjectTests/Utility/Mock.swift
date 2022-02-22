@@ -3,7 +3,7 @@ import CoreLocation
 import Foundation
 import RxSwift
 @testable import CTAProject
-
+//Sourcery使うとモックデータの生成を自動化できるよ
 enum Mock {
     static func getHotPepperResponse() -> HotPepperResponse {
         let genre: Genre = Genre(code: .mock, name: .mock)

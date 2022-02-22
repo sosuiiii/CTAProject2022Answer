@@ -20,7 +20,7 @@ class ListViewModelTests: XCTestCase {
     func test_searchTextInput() {
         dependency = Dependency()
         let testTarget = dependency.testTarget
-        let exceedFiftyText = "テストテキストテストテキストテストテキストテストテキストテストテキストテストテキストテストテキストテストテキスト"
+        let exceedFiftyText = String(repeating: "テスト", count: 20)
         let validatedText = WatchStack(testTarget.output.validatedText)
         let alert = WatchStack(testTarget.output.alert.map { _ in true }) // HUDContentTypeは比較できないのでBool化
 
@@ -69,58 +69,58 @@ class ListViewModelTests: XCTestCase {
     func test_saveFavorite_success() {
         dependency = Dependency()
         let testTarget = dependency.testTarget
-        let realmManager = dependency.realmManager
+        let hotPepperRespository = dependency.hotPepperRespository
         let hud = WatchStack(testTarget.output.hud)
-        realmManager.addEntityHandler = { _, status in
+        hotPepperRespository.addEntityHandler = { _, status in
             status(.success)
         }
-        XCTAssertEqual(realmManager.addEntityCallCount, 0, "saveFavoriteイベント前に呼ばれていないこと")
+        XCTAssertEqual(hotPepperRespository.addEntityCallCount, 0, "saveFavoriteイベント前に呼ばれていないこと")
         let shop = Mock.getShop()[0]
         testTarget.input.saveFavorite.onNext(shop)
-        XCTAssertEqual(realmManager.addEntityCallCount, 1, "saveFavoriteイベント後に1度だけ呼ばれること")
+        XCTAssertEqual(hotPepperRespository.addEntityCallCount, 1, "saveFavoriteイベント後に1度だけ呼ばれること")
         XCTAssertEqual(hud.value, .success, "保存に成功した時、HUDContentType.successが流れること")
     }
 
     func test_saveFavorite_failure() {
         dependency = Dependency()
         let testTarget = dependency.testTarget
-        let realmManager = dependency.realmManager
+        let hotPepperRespository = dependency.hotPepperRespository
         let hud = WatchStack(testTarget.output.hud)
-        realmManager.addEntityHandler = { _, status in
+        hotPepperRespository.addEntityHandler = { _, status in
             status(.error)
         }
-        XCTAssertEqual(realmManager.addEntityCallCount, 0, "saveFavoriteイベント前に呼ばれていないこと")
+        XCTAssertEqual(hotPepperRespository.addEntityCallCount, 0, "saveFavoriteイベント前に呼ばれていないこと")
         let shop = Mock.getShop()[0]
         testTarget.input.saveFavorite.onNext(shop)
-        XCTAssertEqual(realmManager.addEntityCallCount, 1, "saveFavoriteイベント後に1度だけ呼ばれること")
+        XCTAssertEqual(hotPepperRespository.addEntityCallCount, 1, "saveFavoriteイベント後に1度だけ呼ばれること")
         XCTAssertEqual(hud.value, .error, "保存に成功した時、HUDContentType.errorが流れること")
     }
 
     func test_deleteObject_success() {
         dependency = Dependency()
         let testTarget = dependency.testTarget
-        let realmManager = dependency.realmManager
+        let hotPepperRespository = dependency.hotPepperRespository
         let hud = WatchStack(testTarget.output.hud)
-        realmManager.deleteOneObjectHandler = { _, _, status in
+        hotPepperRespository.deleteOneObjectHandler = { _, _, status in
             status(.success)
         }
-        XCTAssertEqual(realmManager.deleteOneObjectCallCount, 0, "deleteObjectイベント前に呼ばれていないこと")
+        XCTAssertEqual(hotPepperRespository.deleteOneObjectCallCount, 0, "deleteObjectイベント前に呼ばれていないこと")
         testTarget.input.deleteObject.onNext(.mock)
-        XCTAssertEqual(realmManager.deleteOneObjectCallCount, 1, "deleteObjectイベント後に1度だけ呼ばれること")
+        XCTAssertEqual(hotPepperRespository.deleteOneObjectCallCount, 1, "deleteObjectイベント後に1度だけ呼ばれること")
         XCTAssertEqual(hud.value, .success, "保存に成功した時、HUDContentType.successが流れること")
     }
 
     func test_deleteObject_failure() {
         dependency = Dependency()
         let testTarget = dependency.testTarget
-        let realmManager = dependency.realmManager
+        let hotPepperRespository = dependency.hotPepperRespository
         let hud = WatchStack(testTarget.output.hud)
-        realmManager.deleteOneObjectHandler = { _, _, status in
+        hotPepperRespository.deleteOneObjectHandler = { _, _, status in
             status(.error)
         }
-        XCTAssertEqual(realmManager.deleteOneObjectCallCount, 0, "deleteObjectイベント前に呼ばれていないこと")
+        XCTAssertEqual(hotPepperRespository.deleteOneObjectCallCount, 0, "deleteObjectイベント前に呼ばれていないこと")
         testTarget.input.deleteObject.onNext(.mock)
-        XCTAssertEqual(realmManager.deleteOneObjectCallCount, 1, "deleteObjectイベント後に1度だけ呼ばれること")
+        XCTAssertEqual(hotPepperRespository.deleteOneObjectCallCount, 1, "deleteObjectイベント後に1度だけ呼ばれること")
         XCTAssertEqual(hud.value, .error, "保存に成功した時、HUDContentType.errorが流れること")
     }
 
@@ -130,14 +130,13 @@ extension ListViewModelTests {
     struct Dependency {
         let testTarget: ListViewModel
         let hotPepperRespository: HotPepperRepositoryTypeMock
-        let realmManager: RealmManagerTypeMock
+//        let realmManager: RealmManagerTypeMock
 
         init() {
             self.hotPepperRespository = HotPepperRepositoryTypeMock()
-            self.realmManager = RealmManagerTypeMock()
+//            self.realmManager = RealmManagerTypeMock()
             testTarget = ListViewModel(
-                hotPepperRepository: hotPepperRespository,
-                realmManager: realmManager
+                hotPepperRepository: hotPepperRespository
             )
         }
     }

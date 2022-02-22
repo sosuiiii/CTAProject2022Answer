@@ -1,33 +1,44 @@
 
 import Moya
 import RxSwift
-
-enum HotPepperAPIError: Error {
-    case responseError
-    case decodeError
-}
+import RealmSwift
 
 final class HotPepperRepository: HotPepperRepositoryType {
-    private let apiProvider = MoyaProvider<HotPepperAPI>()
+    let hotPepperApi: HotPepperAPIType
+    let realmManager: RealmManagerType
+    init(
+        hotPepperApi: HotPepperAPIType = HotPepperAPI(),
+        realmManager: RealmManagerType = RealmManager()
+    ) {
+        self.hotPepperApi = hotPepperApi
+        self.realmManager = realmManager
+    }
 }
-extension HotPepperRepository {
 
-    func search(keyValue: [String: Any]) -> Single<HotPepperResponse> {
-        return Single<HotPepperResponse>.create { [apiProvider] observer in
-            apiProvider.request(.search(keyValue: keyValue)) { response in
-                switch response {
-                case .success(let response):
-                    do {
-                        let decodedData = try JSONDecoder().decode(HotPepperResponse.self, from: response.data)
-                        observer(.success(decodedData))
-                    } catch {
-                        observer(.failure(HotPepperAPIError.decodeError))
-                    }
-                case .failure:
-                    observer(.failure(HotPepperAPIError.responseError))
-                }
-            }
-            return Disposables.create()
-        }
+extension HotPepperRepository: HotPepperAPIType {
+    func search(keyValue: [String : Any]) -> Single<HotPepperResponse> {
+        hotPepperApi.search(keyValue: keyValue)
+    }
+}
+
+extension HotPepperRepository: RealmManagerType {
+    func addEntity<T: Object>(object: T, completion: @escaping (RealmStatus) -> Void ) {
+        realmManager.addEntity(object: object, completion: completion)
+    }
+
+    func deleteOneObject<T: Object>(type: T.Type, name: String, completion: @escaping (RealmStatus) -> Void ) {
+        realmManager.deleteOneObject(type: type, name: name, completion: completion)
+    }
+
+    func deleteEntity<T: Object>(object: T) {
+        realmManager.deleteEntity(object: object)
+    }
+
+    func deleteObject<T: Object>(type: T.Type) {
+        realmManager.deleteObject(type: type)
+    }
+
+    func getEntityList<T: Object>(type: T.Type) -> Array<T> {
+        realmManager.getEntityList(type: type)
     }
 }

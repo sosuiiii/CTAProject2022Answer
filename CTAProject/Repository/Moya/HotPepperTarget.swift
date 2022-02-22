@@ -1,12 +1,12 @@
 
 import Moya
 
-enum HotPepperAPI {
+enum HotPepperTarget {
     case search(keyValue: [String:Any])
     case fetchGenre
 }
 
-extension HotPepperAPI: TargetType {
+extension HotPepperTarget: TargetType {
     var baseURL: URL {
         return URL(string: "https://webservice.recruit.co.jp/")!
     }

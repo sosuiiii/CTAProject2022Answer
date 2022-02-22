@@ -8,12 +8,12 @@ import PKHUD
 import RealmSwift
 
 final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
-    convenience init(hotPepperRepository: HotPepperRepositoryType = HotPepperRepository(),
-                     realmManager: RealmManagerType = RealmManager()) {
+    convenience init(
+        hotPepperRepository: HotPepperRepositoryType = HotPepperRepository()
+    ) {
         self.init(input: Input(),
                   state: State(),
-                  extra: Extra(hotPepperRepository: hotPepperRepository,
-                               realmManager: realmManager)
+                  extra: Extra(hotPepperRepository: hotPepperRepository)
         )
     }
     static func bind(from dependency: Dependency<Input, State, Extra>, disposeBag: DisposeBag) -> Output {
@@ -53,7 +53,7 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
 
         input.saveFavorite.subscribe(onNext: { shop in
             let object = ShopObject(shop: shop)
-            extra.realmManager.addEntity(object: object) { status in
+            extra.hotPepperRepository.addEntity(object: object) { status in
                 switch status {
                 case .success:
                     state.hud.accept(.success)
@@ -64,7 +64,7 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         }).disposed(by: disposeBag)
 
         input.deleteObject.subscribe(onNext: { objectName in
-            extra.realmManager.deleteOneObject(type: ShopObject.self, name: objectName) { status in
+            extra.hotPepperRepository.deleteOneObject(type: ShopObject.self, name: objectName) { status in
                 switch status {
                 case .success:
                     state.hud.accept(.success)
@@ -102,12 +102,8 @@ extension ListViewModel {
 
     struct Extra: ExtraType {
         let hotPepperRepository: HotPepperRepositoryType
-        let realmManager: RealmManagerType
-
-        init(hotPepperRepository: HotPepperRepositoryType,
-             realmManager: RealmManagerType) {
+        init(hotPepperRepository: HotPepperRepositoryType) {
             self.hotPepperRepository = hotPepperRepository
-            self.realmManager = realmManager
         }
     }
 

@@ -8,10 +8,10 @@ import Unio
 import PKHUD
 
 final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteListViewModelType {
-    convenience init(realmManager: RealmManagerType = RealmManager()) {
+    convenience init(hotPepperRepository: HotPepperRepositoryType = HotPepperRepository()) {
         self.init(input: Input(),
                   state: State(),
-                  extra: Extra(realmManager: realmManager)
+                  extra: Extra(hotPepperRepository: hotPepperRepository)
         )
     }
     static func bind(from dependency: Dependency<Input, State, Extra>, disposeBag: DisposeBag) -> Output {
@@ -21,16 +21,16 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
         let extra = dependency.extra
 
         input.viewWillAppear.subscribe(onNext: {
-            let datasource = getFavoriteHotPepperObjectsDataSource(realm: extra.realmManager)
+            let datasource = getFavoriteHotPepperObjectsDataSource(hotPepperRepository: extra.hotPepperRepository)
             state.datasource.accept(datasource)
         }).disposed(by: disposeBag)
 
         input.deleteObject.subscribe(onNext: { objectName in
-            extra.realmManager.deleteOneObject(type: ShopObject.self, name: objectName) { status in
+            extra.hotPepperRepository.deleteOneObject(type: ShopObject.self, name: objectName) { status in
                 switch status {
                 case .success:
                     state.hud.accept(.success)
-                    let datasource = getFavoriteHotPepperObjectsDataSource(realm: extra.realmManager)
+                    let datasource = getFavoriteHotPepperObjectsDataSource(hotPepperRepository: extra.hotPepperRepository)
                     state.datasource.accept(datasource)
                 case .error:
                     state.hud.accept(.error)
@@ -53,8 +53,8 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
                       dismissHUD: state.dismissHUD.asObservable()
         )
     }
-    static func getFavoriteHotPepperObjectsDataSource(realm: RealmManagerType) -> [FavoriteHotPepperObjectsDataSource] {
-        let objects = realm.getEntityList(type: ShopObject.self)
+    static func getFavoriteHotPepperObjectsDataSource(hotPepperRepository: HotPepperRepositoryType) -> [FavoriteHotPepperObjectsDataSource] {
+        let objects = hotPepperRepository.getEntityList(type: ShopObject.self)
         let datasource = [FavoriteHotPepperObjectsDataSource(items: objects)]
         return datasource
     }
@@ -74,10 +74,10 @@ extension FavoriteListViewModel {
     }
 
     struct Extra: ExtraType {
-        let realmManager: RealmManagerType
+        let hotPepperRepository: HotPepperRepositoryType
 
-        init(realmManager: RealmManagerType) {
-            self.realmManager = realmManager
+        init(hotPepperRepository: HotPepperRepositoryType) {
+            self.hotPepperRepository = hotPepperRepository
         }
     }
 
