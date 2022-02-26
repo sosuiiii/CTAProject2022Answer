@@ -7,11 +7,14 @@ import RxSwift
 
 final class FavoriteListViewController: UIViewController {
 
+    // FatViewController対策と共通化の理由でヘッダー部分を別クラスで定義している
     private let headerView = TabBarControllerHeaderView()
     private let tableView = UITableView()
     private var datasource: RxTableViewSectionedReloadDataSource<FavoriteHotPepperObjectsDataSource>?
     private let disposeBag = DisposeBag()
 
+    // ViewModelをDI
+    // storyboardを使っていると若干DIに工夫が必要だった気がする。調べてみて
     private let viewModel: FavoriteListViewModelType
     init(viewModel: FavoriteListViewModelType) {
         self.viewModel = viewModel
@@ -42,6 +45,7 @@ final class FavoriteListViewController: UIViewController {
                 HUD.show(type)
             }).disposed(by: disposeBag)
 
+        // 表示と非表示は別のイベントとして流してあげたほうが良さそう
         viewModel.output.dismissHUD
             .observe(on: ConcurrentMainScheduler.instance)
             .subscribe(onNext: {

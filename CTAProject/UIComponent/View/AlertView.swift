@@ -23,7 +23,8 @@ class AlertView: UIView {
     }
 
     private func initializeView() {
-        let view = Bundle.main.loadNibNamed("AlertView", owner: self, options: nil)?.first as! UIView
+        // String(describing: self)によってクラス名が変わっても対応してくれるようになる
+        let view = Bundle.main.loadNibNamed(String(describing: self), owner: self, options: nil)?.first as! UIView
         view.frame = bounds
         addSubview(view)
     }
@@ -32,27 +33,25 @@ class AlertView: UIView {
         self.message.text = message
         doneButton.setTitle(L10n.close, for: .normal)
         cancelButton.isHidden = true
+        let dismiss = PublishRelay<Void>()
 
         doneButton.rx.tap
-            .withUnretained(self)
-            .subscribe(onNext: { me, _ in
-                me.dismiss()
-            }).disposed(by: disposeBag)
+            .bind(to: dismiss)
+            .disposed(by: disposeBag)
 
         cancelButton.rx.tap
-            .withUnretained(self)
-            .subscribe(onNext: { me, _ in
-                me.dismiss()
-            }).disposed(by: disposeBag)
-    }
+            .bind(to: dismiss)
+            .disposed(by: disposeBag)
 
-    private func dismiss() {
-        DispatchQueue.main.async {
-            let transition = CATransition()
-            transition.duration = 0.3
-            transition.type = .fade
-            self.window?.layer.add(transition, forKey: kCATransition)
-            self.removeFromSuperview()
-        }
+        dismiss
+            .withUnretained(self)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { me, _ in
+                let transition = CATransition()
+                transition.duration = 0.3
+                transition.type = .fade
+                me.window?.layer.add(transition, forKey: kCATransition)
+                me.removeFromSuperview()
+        }).disposed(by: disposeBag)
     }
 }

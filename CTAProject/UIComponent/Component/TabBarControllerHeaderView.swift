@@ -3,6 +3,7 @@ import UIKit
 
 final class TabBarControllerHeaderView: UIView {
 
+    // UIオブジェクトを定義する場所を自分の中で決めておくと可読性が上がる
     let titleLabel: UILabel = {
         let label = UILabel()
         label.text = L10n.gourmentSpot

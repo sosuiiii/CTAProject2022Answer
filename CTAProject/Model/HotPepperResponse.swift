@@ -1,7 +1,8 @@
 
 import Foundation
 import CoreLocation
-
+// 値によっては  値がある時はInt、値がない時はStringの空文字で帰ってくるなど
+// するためそういった値はコメントアウトして使わないようにしている
 struct HotPepperResponse: Codable, Equatable {
     let results: Result
 }

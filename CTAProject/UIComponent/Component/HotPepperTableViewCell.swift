@@ -8,6 +8,7 @@
 import UIKit
 import SDWebImage
 
+// Rxじゃないver、xibを使ってるver
 protocol HotPepperTableViewCellDelegate: AnyObject {
     func addFavorite(item: Shop)
     func removeFavorite(item: Shop)
@@ -38,14 +39,16 @@ class HotPepperTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-
+    // ViewController側でそれぞれのUIオブジェクトに値を代入するのではなく、
+    // configureやsetupなどで内部で代入してあげると良さそう。
+    // ロジックはリファクタできそうなので検討してみて良さそう
     func setupCell(item: Shop) {
         shop = item
         setImageBySDWebImage(with: item.logoImage ?? noImageURL)
         name.text = item.name
         budget.text = item.budget?.name
         genreAndStation.text = L10n.genreAndStation("\(item.genre)", "\(item.stationName ?? "")")
-
+        // ほんとは直接データアクセス層をみてるのは良くない。
         let objects = RealmManager().getEntityList(type: ShopObject.self)
         let objectNameList = objects.map { $0.name }
         if objectNameList.contains(item.name) {
@@ -57,6 +60,7 @@ class HotPepperTableViewCell: UITableViewCell {
         }
     }
 
+    // リファクタできる。
     func setupFavorite(item: ShopObject) {
         object = item
         starIcon.tag = 1

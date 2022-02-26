@@ -22,6 +22,9 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         let state = dependency.state
         let extra = dependency.extra
 
+        // ViewはユーザーやOSのイベントをViewModelに流すだけ。
+        // そのイベントの値をどう加工するかはViewModelの仕事
+        // 加工したら、Viewが表示できるデータに変換し、送る
         input.searchTextInput.subscribe(onNext: { text in
             if text.count > 50 {
                 state.alertType.accept(.textCountOver)
@@ -31,18 +34,22 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
             }
         }).disposed(by: disposeBag)
 
-        input.searchButtonTapped.flatMapLatest({ text -> Single<HotPepperResponse> in
+        input.searchButtonTapped.flatMapLatest({ text -> Single<HotPepperResponse?> in
             state.hud.accept(.progress)
             return extra.hotPepperRepository.search(keyValue: ["keyword": text])
-                .timeout(.milliseconds(5000), scheduler: ConcurrentMainScheduler.instance)
+                .timeout(.seconds(4), scheduler: ConcurrentMainScheduler.instance)
+                .map(Optional.some) // HotPepperResponse -> HotPepperResponse?。関数の返り値をオプショナルにしないのは、それが利用側の都合であって定義が利用側によって作用されるのはおかしいため。
+                .catchAndReturn(nil) // 購読を終了させないよう、エラーを補足したら正常系のnilを流す
         }).subscribe(onNext: { response in
+            guard let response = response else {
+                state.hud.accept(.error)
+                return
+            }
             state.datasource.accept([HotPepperResponseDataSource(items: response.results.shop)])
             state.dismissHUD.accept(())
-        }, onError: { _ in
-            state.hud.accept(.error)
         }).disposed(by: disposeBag)
 
-        // MARK: - HUD表示は 0.7秒後 にdismissする
+        // MARK: - HUD.error表示は 0.7秒後 にdismissする
         state.hud
             .delay(RxTimeInterval.milliseconds(700),
                    scheduler: ConcurrentMainScheduler.instance)
@@ -53,6 +60,8 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
 
         input.saveFavorite.subscribe(onNext: { shop in
             let object = ShopObject(shop: shop)
+            // クロージャの記法にはいくつか種類がある。以下はトレーリングクロージャ
+            // A Swift Tour (App Document参照)
             extra.hotPepperRepository.addEntity(object: object) { status in
                 switch status {
                 case .success:

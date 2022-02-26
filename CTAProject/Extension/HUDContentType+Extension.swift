@@ -1,6 +1,9 @@
 import PKHUD
+import RxSwift
 
 extension HUDContentType: Equatable {
+    // Equatableに準拠すると、 == 関数の中で プロパティ同士を結びつける必要がある場合がある。
+    // lhsとrhsが==関係になることを表現してあげる。
     public static func == (lhs: HUDContentType, rhs: HUDContentType) -> Bool {
         switch lhs {
         case .success:

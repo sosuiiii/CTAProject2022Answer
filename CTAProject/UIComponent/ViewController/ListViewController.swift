@@ -7,6 +7,7 @@ import RxSwift
 
 final class ListViewController: UIViewController {
 
+    // FatViewController対策と共通化の理由でヘッダーと検索バーを別クラスで定義している
     private let headerView = TabBarControllerHeaderView()
     private let searchView = TabBarControllerSearchView()
     private let tableView = UITableView()
@@ -36,11 +37,14 @@ final class ListViewController: UIViewController {
         setLayout()
 
         // Input
+        // オペレータの種類は調べておくと良い
+        // https://github.com/ReactiveX/RxSwift/tree/main/RxSwift/Observables
+        // 本当はイベント名とinput名を合わせるのが良い
         searchView.searchBar.searchTextField.rx.controlEvent([.editingChanged])
             .withLatestFrom(searchView.searchBar.rx.text.orEmpty)
-            .bind(to: viewModel.input.searchTextInput)
+            .bind(to: viewModel.input.searchTextInput) // bindにできる処理はなるべくbindに。
             .disposed(by: disposeBag)
-
+        // 本当はイベント名とinput名を合わせるのが良い
         searchView.searchBar.rx.searchButtonClicked
             .withLatestFrom(searchView.searchBar.rx.text.orEmpty)
             .bind(to: viewModel.input.searchButtonTapped)
@@ -52,13 +56,11 @@ final class ListViewController: UIViewController {
             .disposed(by: disposeBag)
 
         viewModel.output.hud
-            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe(onNext: { type in
                 HUD.show(type)
             }).disposed(by: disposeBag)
 
         viewModel.output.dismissHUD
-            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe(onNext: {
                 HUD.hide()
             }).disposed(by: disposeBag)
@@ -108,6 +110,8 @@ final class ListViewController: UIViewController {
 
 extension ListViewController: HotPepperTableViewCellDelegate {
 
+    // 本当はrxでやると良い
+    // イベントリスナーを統一するのも目的の1つであるため
     func addFavorite(item: Shop) {
         viewModel.input.saveFavorite.onNext(item)
     }

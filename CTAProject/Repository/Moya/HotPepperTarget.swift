@@ -1,11 +1,13 @@
 
 import Moya
+// import Foundationをすると定義が被りエラーになるので注意
 
+// エンドポイントによってcaseで分けることができる
 enum HotPepperTarget {
     case search(keyValue: [String:Any])
     case fetchGenre
 }
-
+// caseごとにURLやpathなど定義できる。
 extension HotPepperTarget: TargetType {
     var baseURL: URL {
         return URL(string: "https://webservice.recruit.co.jp/")!

@@ -3,6 +3,12 @@ import Moya
 import RxSwift
 import RealmSwift
 
+// レポジトリはデータアクセスレイヤーに対してI/Fを持つ
+// ここではHotPepperAPIとRealmManagerで、
+// Repositoryを利用する側からは 保存先が RealmでもSQL でも関係なく操作ができるようになる
+// Realmに保存するか、SQLに保存するか、APIかどうか、はRepositoryの中で決定してることであって、
+// Repositoryの外から意識することではないため。
+
 final class HotPepperRepository: HotPepperRepositoryType {
     let hotPepperApi: HotPepperAPIType
     let realmManager: RealmManagerType

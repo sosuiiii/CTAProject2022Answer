@@ -16,15 +16,23 @@ class ListViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
     }
-
+    // test_メソッド・Input・Output の形式にするとテスト対象が明確で良い
     func test_searchTextInput() {
+        // 毎回Dependencyインスタンスを代入することでリセット
         dependency = Dependency()
+        // テスト対象のクラスをtestTargetとして定義するなどするとわかりやすい
         let testTarget = dependency.testTarget
         let exceedFiftyText = String(repeating: "テスト", count: 20)
+        // 内部でschedulerやdisposeBagを持っているため、購読対象をパラメータに渡すだけで良い
+        
         let validatedText = WatchStack(testTarget.output.validatedText)
-        let alert = WatchStack(testTarget.output.alert.map { _ in true }) // HUDContentTypeは比較できないのでBool化
+        // AlertTypeは比較できないのでmapでBool化
+        // ただしAlertTypeをEquatableに準拠させれば済む
+        let alert = WatchStack(testTarget.output.alert.map { _ in true })
 
         testTarget.input.searchTextInput.onNext(.mock)
+        // descriptionとして、第3引数に期待することを日本語で書いておくと、
+        // テストが失敗したときになんの失敗かわかりやすい
         XCTAssertEqual(validatedText.value, .mock, "50文字以内の入力文字がそのまま反映されること")
         XCTAssertNil(alert.value, "50文字以内で警告アラートが出ないこと")
 
@@ -42,6 +50,10 @@ class ListViewModelTests: XCTestCase {
 
         XCTAssertEqual(hotPepperRepository.searchCallCount, 0, "searchが呼ばれていないこと")
         var keyword: [String: Any]?
+        // searchメソッドが呼ばれたときに、$0もしくはパラメータ名で引数の値を参照できる
+        // searchメソッドが呼ばれたときに、returnに定義した値を返すことができる
+        // searchメソッドはショップ検索APIだが、ここで空の値を返せばViewModelでは空の値が返ってきたものとしてロジックが動く
+        // 異常系(API失敗)で返したい場合はここでエラーを返してあげると良い
         dependency.hotPepperRespository.searchHandler = {
             keyword = $0
             return Mock.SingleHotPepperResponse()
@@ -130,11 +142,9 @@ extension ListViewModelTests {
     struct Dependency {
         let testTarget: ListViewModel
         let hotPepperRespository: HotPepperRepositoryTypeMock
-//        let realmManager: RealmManagerTypeMock
 
         init() {
             self.hotPepperRespository = HotPepperRepositoryTypeMock()
-//            self.realmManager = RealmManagerTypeMock()
             testTarget = ListViewModel(
                 hotPepperRepository: hotPepperRespository
             )

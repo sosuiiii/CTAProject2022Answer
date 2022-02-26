@@ -2,8 +2,8 @@ import RxSwift
 import RxTest
 
 struct WatchStack<Element> {
-    let scheduler: TestScheduler
-    let observer: TestableObserver<Element>
+    let scheduler: TestScheduler // ストリーム(時間軸)を表現
+    let observer: TestableObserver<Element> // イベントを購読
     let disposeBag = DisposeBag()
 
     init<O: ObservableType>(_ observable: O,

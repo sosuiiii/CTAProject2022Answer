@@ -7,6 +7,8 @@ import RxRelay
 import Unio
 import PKHUD
 
+// Unioを使ったViewModelデザインパターン
+// 強制的に書けるので統一性が上がる
 final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteListViewModelType {
     convenience init(hotPepperRepository: HotPepperRepositoryType = HotPepperRepository()) {
         self.init(input: Input(),
@@ -20,6 +22,7 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
         let state = dependency.state
         let extra = dependency.extra
 
+        // 本当はrealmを購読して更新するのが一番良い
         input.viewWillAppear.subscribe(onNext: {
             let datasource = getFavoriteHotPepperObjectsDataSource(hotPepperRepository: extra.hotPepperRepository)
             state.datasource.accept(datasource)
@@ -38,12 +41,12 @@ final class FavoriteListViewModel: UnioStream<FavoriteListViewModel>, FavoriteLi
             }
         }).disposed(by: disposeBag)
 
-        // MARK: - HUD表示は 0.7秒後 にdismissする
+        // MARK: - HUD.error表示は 0.7秒後 にdismissする
         state.hud
             .delay(RxTimeInterval.milliseconds(700),
                    scheduler: ConcurrentMainScheduler.instance)
             .filter { $0 == .error }
-            .map(void)
+            .map(void) // mapは型変換にも使える。 HUDContentType -> Void。このvoidはExtensionで定義した関数。
             .bind(to: state.dismissHUD)
             .disposed(by: disposeBag)
 
@@ -74,6 +77,9 @@ extension FavoriteListViewModel {
     }
 
     struct Extra: ExtraType {
+        // 外部に依存しているものをここに定義する。
+        // DIしているものなどがその例
+        // 依存していない定数はConstに定義
         let hotPepperRepository: HotPepperRepositoryType
 
         init(hotPepperRepository: HotPepperRepositoryType) {
@@ -82,6 +88,7 @@ extension FavoriteListViewModel {
     }
 
     struct State: StateType {
+        // Input の状態を Stateに保持し、 Stateを Outputに渡す
         let datasource = BehaviorRelay<[FavoriteHotPepperObjectsDataSource]>(value: [])
         let hud = PublishRelay<HUDContentType>()
         let dismissHUD = PublishRelay<Void>()

@@ -7,6 +7,10 @@ final class HotPepperAPI {
 
 extension HotPepperAPI: HotPepperAPIType {
     func search(keyValue: [String: Any]) -> Single<HotPepperResponse> {
+        // Singleを生成。クロージャ内のobserverパラメータにイベントをハンドリングすることで、
+        // 任意のタイミングで正常系だったり異常系のイベントを渡し、
+        // 購読側でそれを検知することができる
+        // decodeオペレータもあるのでチェックしてみると良いかも
         return Single<HotPepperResponse>.create { [apiProvider] observer in
             apiProvider.request(.search(keyValue: keyValue)) { response in
                 switch response {
@@ -21,6 +25,7 @@ extension HotPepperAPI: HotPepperAPIType {
                     observer(.failure(HotPepperAPIError.responseError))
                 }
             }
+            // disposableなやつを最後に返してあげないとdisposeできない。書かないと怒られる。
             return Disposables.create()
         }
     }

@@ -15,8 +15,10 @@ final class TopTabBarController: UITabBarController {
     }
 
     private func createListViewController() -> UIViewController {
+        // デフォルト引数使ってViewModelの注入省略しても良いかも
         let listViewModel = ListViewModel()
         let listViewController = ListViewController(viewModel: listViewModel)
+        // systemNameもSwiftGenでできるとか聞いたような
         listViewController.tabBarItem = .init(title: L10n.list, image: UIImage(systemName: "list.bullet"), tag: 0)
         return listViewController
     }

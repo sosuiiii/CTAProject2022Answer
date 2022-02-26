@@ -16,7 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else {
             return
         }
-
+        // 起動時に表示するViewControllerを指定。
+        // Info.plistでも設定をしないと上手く機能しない
+        // TabBarControllerを使用する場合、TabBarControllerをrootViewControllerに代入する
         let window = UIWindow(windowScene: scene)
         self.window = window
         window.makeKeyAndVisible()
