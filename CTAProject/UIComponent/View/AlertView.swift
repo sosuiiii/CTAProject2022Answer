@@ -23,7 +23,7 @@ class AlertView: UIView {
     }
 
     private func initializeView() {
-        let view = Bundle.main.loadNibNamed("AlertView", owner: self, options: nil)?.first as! UIView
+        let view = Bundle.main.loadNibNamed(String(describing: self), owner: self, options: nil)?.first as! UIView
         view.frame = bounds
         addSubview(view)
     }
@@ -33,13 +33,8 @@ class AlertView: UIView {
         doneButton.setTitle(L10n.close, for: .normal)
         cancelButton.isHidden = true
 
-        doneButton.rx.tap
-            .withUnretained(self)
-            .subscribe(onNext: { me, _ in
-                me.dismiss()
-            }).disposed(by: disposeBag)
-
-        cancelButton.rx.tap
+        Observable.merge(doneButton.rx.tap.asObservable(), cancelButton.rx.tap.asObservable())
+            .observe(on: MainScheduler.instance)
             .withUnretained(self)
             .subscribe(onNext: { me, _ in
                 me.dismiss()
@@ -47,12 +42,10 @@ class AlertView: UIView {
     }
 
     private func dismiss() {
-        DispatchQueue.main.async {
-            let transition = CATransition()
-            transition.duration = 0.3
-            transition.type = .fade
-            self.window?.layer.add(transition, forKey: kCATransition)
-            self.removeFromSuperview()
-        }
+        let transition = CATransition()
+        transition.duration = 0.3
+        transition.type = .fade
+        self.window?.layer.add(transition, forKey: kCATransition)
+        self.removeFromSuperview()
     }
 }

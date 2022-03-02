@@ -22,7 +22,8 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         let state = dependency.state
         let extra = dependency.extra
 
-        input.searchTextInput.subscribe(onNext: { text in
+        input.searchTextInput
+            .subscribe(onNext: { text in
             if text.count > 50 {
                 state.alertType.accept(.textCountOver)
                 state.validatedText.accept("\(text.prefix(50))")
