@@ -37,13 +37,11 @@ final class FavoriteListViewController: UIViewController {
 
         // Output
         viewModel.output.hud
-            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe(onNext: { type in
                 HUD.show(type)
             }).disposed(by: disposeBag)
 
         viewModel.output.dismissHUD
-            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe(onNext: {
                 HUD.hide()
             }).disposed(by: disposeBag)

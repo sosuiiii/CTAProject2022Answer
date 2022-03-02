@@ -24,11 +24,12 @@ class ListViewModelTests: XCTestCase {
         let validatedText = WatchStack(testTarget.output.validatedText)
         let alert = WatchStack(testTarget.output.alert.map { _ in true }) // HUDContentTypeは比較できないのでBool化
 
-        testTarget.input.searchTextInput.onNext(.mock)
-        XCTAssertEqual(validatedText.value, .mock, "50文字以内の入力文字がそのまま反映されること")
+        testTarget.input.searchBarText.onNext(.mock)
+        testTarget.input.searchBarEditingChanged.onNext(())
         XCTAssertNil(alert.value, "50文字以内で警告アラートが出ないこと")
 
-        testTarget.input.searchTextInput.onNext(exceedFiftyText)
+        testTarget.input.searchBarText.onNext(exceedFiftyText)
+        testTarget.input.searchBarEditingChanged.onNext(())
         XCTAssertEqual(validatedText.value?.count, 50, "50文字超過の入力文字が50文字に切り抜かれて反映されること")
         XCTAssertNotNil(alert.value, "50文字超過でアラートが出ること")
     }
@@ -47,7 +48,8 @@ class ListViewModelTests: XCTestCase {
             return Mock.SingleHotPepperResponse()
         }
 
-        testTarget.input.searchButtonTapped.onNext(.mock)
+        testTarget.input.searchBarText.onNext(.mock)
+        testTarget.input.searchButtonClicked.onNext(())
         XCTAssertEqual(hotPepperRepository.searchCallCount, 1, "searchが1回呼ばれること")
         XCTAssertEqual(keyword!["keyword"] as? String, .mock, "[keyword: 検索ワード]でイベントが流れること")
         XCTAssertEqual(datasource.value?[0].items, Mock.getShop(), "期待する検索結果が返ってくること")
@@ -62,7 +64,8 @@ class ListViewModelTests: XCTestCase {
 
         XCTAssertEqual(hotPepperRepository.searchCallCount, 0, "searchが呼ばれていないこと")
         hotPepperRepository.searchHandler = { _ in .error(MockError()) }
-        testTarget.input.searchButtonTapped.onNext(.mock)
+        testTarget.input.searchBarText.onNext(.mock)
+        testTarget.input.searchButtonClicked.onNext(())
         XCTAssertEqual(hud.value, .error, "APIErrorでHUDContentType.errorが流れること")
     }
 

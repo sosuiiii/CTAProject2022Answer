@@ -23,7 +23,7 @@ class AlertView: UIView {
     }
 
     private func initializeView() {
-        let view = Bundle.main.loadNibNamed(String(describing: self), owner: self, options: nil)?.first as! UIView
+        let view = Bundle.main.loadNibNamed(String(describing: AlertView.self), owner: self, options: nil)?.first as! UIView
         view.frame = bounds
         addSubview(view)
     }

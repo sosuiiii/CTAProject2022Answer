@@ -22,26 +22,30 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
         let state = dependency.state
         let extra = dependency.extra
 
-        input.searchTextInput
+        input.searchBarEditingChanged
+            .withLatestFrom(input.searchBarText)
+            .filter { $0.count > 50 }
             .subscribe(onNext: { text in
-            if text.count > 50 {
                 state.alertType.accept(.textCountOver)
                 state.validatedText.accept("\(text.prefix(50))")
-            } else {
-                state.validatedText.accept(text)
-            }
-        }).disposed(by: disposeBag)
+            }).disposed(by: disposeBag)
 
-        input.searchButtonTapped.flatMapLatest({ text -> Single<HotPepperResponse> in
-            state.hud.accept(.progress)
-            return extra.hotPepperRepository.search(keyValue: ["keyword": text])
-                .timeout(.milliseconds(5000), scheduler: ConcurrentMainScheduler.instance)
-        }).subscribe(onNext: { response in
-            state.datasource.accept([HotPepperResponseDataSource(items: response.results.shop)])
-            state.dismissHUD.accept(())
-        }, onError: { _ in
-            state.hud.accept(.error)
-        }).disposed(by: disposeBag)
+        input.searchButtonClicked
+            .withLatestFrom(input.searchBarText)
+            .flatMapLatest({ text -> Single<HotPepperResponse?> in
+                state.hud.accept(.progress)
+                return extra.hotPepperRepository.search(keyValue: ["keyword": text])
+                    .timeout(.milliseconds(5000), scheduler: ConcurrentMainScheduler.instance)
+                    .map(Optional.some)
+                    .catchAndReturn(nil)
+            }).subscribe(onNext: { response in
+                guard let response = response else {
+                    state.hud.accept(.error)
+                    return
+                }
+                state.datasource.accept([HotPepperResponseDataSource(items: response.results.shop)])
+                state.dismissHUD.accept(())
+            }).disposed(by: disposeBag)
 
         // MARK: - HUD表示は 0.7秒後 にdismissする
         state.hud
@@ -87,8 +91,9 @@ final class ListViewModel: UnioStream<ListViewModel>, ListViewModelType {
 extension ListViewModel {
 
     struct Input: InputType {
-        let searchTextInput = PublishRelay<String>()
-        let searchButtonTapped = PublishRelay<String>()
+        let searchBarText = PublishRelay<String>()
+        let searchButtonClicked = PublishRelay<Void>()
+        let searchBarEditingChanged = PublishRelay<Void>()
         let saveFavorite = PublishRelay<Shop>()
         let deleteObject = PublishRelay<String>()
     }

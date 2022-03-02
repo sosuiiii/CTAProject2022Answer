@@ -36,14 +36,16 @@ final class ListViewController: UIViewController {
         setLayout()
 
         // Input
+        searchView.searchBar.rx.text.orEmpty
+            .bind(to: viewModel.input.searchBarText)
+            .disposed(by: disposeBag)
+
         searchView.searchBar.searchTextField.rx.controlEvent([.editingChanged])
-            .withLatestFrom(searchView.searchBar.rx.text.orEmpty)
-            .bind(to: viewModel.input.searchTextInput)
+            .bind(to: viewModel.input.searchBarEditingChanged)
             .disposed(by: disposeBag)
 
         searchView.searchBar.rx.searchButtonClicked
-            .withLatestFrom(searchView.searchBar.rx.text.orEmpty)
-            .bind(to: viewModel.input.searchButtonTapped)
+            .bind(to: viewModel.input.searchButtonClicked)
             .disposed(by: disposeBag)
 
         // Output
@@ -52,21 +54,18 @@ final class ListViewController: UIViewController {
             .disposed(by: disposeBag)
 
         viewModel.output.hud
-            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe(onNext: { type in
                 HUD.show(type)
             }).disposed(by: disposeBag)
 
         viewModel.output.dismissHUD
-            .observe(on: ConcurrentMainScheduler.instance)
             .subscribe(onNext: {
                 HUD.hide()
             }).disposed(by: disposeBag)
 
         viewModel.output.alert
             .observe(on: ConcurrentMainScheduler.instance)
-            .withUnretained(self)
-            .subscribe(onNext: { me, alertType in
+            .subscribe(with: self, onNext: { me, alertType in
                 me.searchView.endEditing(true)
                 if case .textCountOver = alertType {
                     let alertView = AlertView(message: L10n.charactersExceeds50)
